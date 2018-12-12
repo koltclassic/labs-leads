@@ -1,0 +1,30 @@
+# import * from './generated/prisma.graphql'
+
+type SuccessMessage {
+  message: String
+}
+
+type Mutation {
+  createApp(title: String, description: String, price: Int, image: String): App!
+  updateApp(id: ID!, title: String, description: String, price: Int): App!
+  deleteApp(id: ID!): App
+  signup(email: String!, password: String!, name: String!): User!
+  signin(email: String!, password: String!): User!
+  signout: SuccessMessage
+  requestReset(email: String!): SuccessMessage
+  resetPassword(resetToken: String!, password: String!, confirmPassword: String!): User!
+}
+
+type Query {
+  apps(where: AppWhereInput, orderBy: AppOrderByInput, skip: Int, first: Int): [App]!
+  app(where: AppWhereUniqueInput!): App
+  appsConnection(where: AppWhereInput): AppConnection!
+  me: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  permissions: [Permission!]!
+}
