@@ -8,4 +8,5 @@ npm install && npm run dev
 
 ```
 
-Environment variables will be available in 1password
+A .env file will need to be created at the root level of the backend directory
+The contents of the env file are available in 1password
