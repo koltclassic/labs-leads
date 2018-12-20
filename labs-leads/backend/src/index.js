@@ -10,20 +10,25 @@ server.express.use(cookieParser());
 
 // decode the JWT so we can get the user ID on each request
 server.express.use((req, res, next) => {
-    const { token } = req.cookies;
-    if (token) {
-        const { userId } = jwt.verify(token, process.env.APP_SECRET);
-        // put the userId onto further requests to access
-        req.userId = userId;
-    }
-    next();
-})
+  const { token } = req.cookies;
+  if (token) {
+    const { userId } = jwt.verify(token, process.env.APP_SECRET);
+    // put the userId onto further requests to access
+    req.userId = userId;
+  }
+  next();
+});
 
-server.start({
+server.start(
+  {
     cors: {
-        credentials: true,
-        origin: process.env.FRONTEND_URL,
-    }
-}, details => {
-    console.log(`Server is now running on port http://localhost:${details.port}`)
-})
+      credentials: true,
+      origin: process.env.FRONTEND_URL,
+    },
+  },
+  details => {
+    console.log(
+      `Server is now running on port http://localhost:${details.port}`
+    );
+  }
+);
