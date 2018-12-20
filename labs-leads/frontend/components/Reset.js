@@ -7,67 +7,93 @@ import propTypes from 'prop-types';
 import { CURRENT_USER_QUERY } from './User';
 
 const RESET_MUTATION = gql`
-  mutation RESET_MUTATION($resetToken: String!, $password: String!, $confirmPassword: String!) {
-      resetPassword(resetToken: $resetToken, password: $password, confirmPassword: $confirmPassword) {
-          id
-          email
-          name
-      }
+  mutation RESET_MUTATION(
+    $resetToken: String!
+    $password: String!
+    $confirmPassword: String!
+  ) {
+    resetPassword(
+      resetToken: $resetToken
+      password: $password
+      confirmPassword: $confirmPassword
+    ) {
+      id
+      email
+      name
+    }
   }
 `;
 
 class Reset extends Component {
-    static propTypes = {
-        resetToken: propTypes.string.isRequired
-    }
-    state = {
-        password: '',
-        confirmPassword: '',
-    };
+  static propTypes = {
+    resetToken: propTypes.string.isRequired,
+  };
+  state = {
+    password: '',
+    confirmPassword: '',
+  };
 
-    saveToState = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
-    }
+  saveToState = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
 
-    render() {
-        return (
-            <Mutation 
-              mutation={RESET_MUTATION} 
-              variables={{
-                  resetToken: this.props.resetToken,
-                  password: this.props.password,
-                  confirmPassword: this.props.confirmPassword
+  render() {
+    return (
+      <Mutation
+        mutation={RESET_MUTATION}
+        variables={{
+          resetToken: this.props.resetToken,
+          password: this.props.password,
+          confirmPassword: this.props.confirmPassword,
+        }}
+        refetchQueries={[
+          {
+            query: CURRENT_USER_QUERY,
+          },
+        ]}
+      >
+        {(reset, { error, loading, called }) => {
+          return (
+            <Form
+              method="post"
+              onSubmit={async e => {
+                e.preventDefault();
+                await reset();
+                this.setState({ email: '' });
               }}
-              refetchQueries={[{
-                  query: CURRENT_USER_QUERY
-              }]}
-              >
-            {(reset, {error, loading, called}) => {
-                return (
-                <Form method="post" onSubmit={async e => {
-                    e.preventDefault();
-                    await reset();
-                    this.setState({ email: ''})
-                }}>
-                <fieldset disabled={loading} aria-busy={loading}>
-                    <h2>New password</h2>
-                    <Error error={error} />
-                    <label htmlFor="password">
-                        Password
-                        <input type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.saveToState} />
-                    </label>
+            >
+              <fieldset disabled={loading} aria-busy={loading}>
+                <h2>New password</h2>
+                <Error error={error} />
+                <label htmlFor="password">
+                  Password
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={this.state.password}
+                    onChange={this.saveToState}
+                  />
+                </label>
 
-                    <label htmlFor="confirmPassword">
-                        Confirm Your Password
-                        <input type="password" name="confirmPassword" placeholder="Confirm Password" value={this.state.confirmPassword} onChange={this.saveToState} />
-                    </label>
-                    <button type="submit">Reset Password</button>
-                </fieldset>
-                </Form>)
-            }}
-            </Mutation>
-        );
-    }
+                <label htmlFor="confirmPassword">
+                  Confirm Your Password
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    value={this.state.confirmPassword}
+                    onChange={this.saveToState}
+                  />
+                </label>
+                <button type="submit">Reset Password</button>
+              </fieldset>
+            </Form>
+          );
+        }}
+      </Mutation>
+    );
+  }
 }
 
 export default Reset;

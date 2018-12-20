@@ -8,49 +8,59 @@ import { perPage } from '../config';
 
 const PAGINATION_QUERY = gql`
   query PAGINATION_QUERY {
-      appsConnection {
-          aggregate {
-              count
-          }
+    appsConnection {
+      aggregate {
+        count
       }
+    }
   }
-`
+`;
 
 const Pagination = props => (
-        <Query query={PAGINATION_QUERY}>
-            {({ data, loading, error }) => {
-                if (loading) return <p>Loading...</p>;
-                const count = data.appsConnection.aggregate.count;
-                const pages = Math.ceil(count / perPage);
-                const page = props.page;
+  <Query query={PAGINATION_QUERY}>
+    {({ data, loading, error }) => {
+      if (loading) return <p>Loading...</p>;
+      const count = data.appsConnection.aggregate.count;
+      const pages = Math.ceil(count / perPage);
+      const page = props.page;
 
-                return (
-                    <PaginationStyles>
-                      <Head>
-                          <title>
-                              Labs Leads | Page {page} of {pages}
-                          </title>
-                      </Head>
-                      <Link prefetch href={{
-                          pathname: 'applications',
-                          query: { page: page - 1}
-                      }}>
-                       <a className="prev" aria-disabled={page <= 1}>Prev</a>
-                      </Link>
-                      <p>
-                        Page {props.page} of {pages}
-                      </p>
-                      <p>{count} Applications Total</p>
-                      <Link prefetch href={{
-                          pathname: 'applications',
-                          query: { page: page + 1}
-                      }}>
-                       <a className="prev" aria-disabled={page >= pages}>Next</a>
-                      </Link>
-                    </PaginationStyles>
-                )
+      return (
+        <PaginationStyles>
+          <Head>
+            <title>
+              Labs Leads | Page {page} of {pages}
+            </title>
+          </Head>
+          <Link
+            prefetch
+            href={{
+              pathname: 'applications',
+              query: { page: page - 1 },
             }}
-        </Query>
-)
+          >
+            <a className="prev" aria-disabled={page <= 1}>
+              Prev
+            </a>
+          </Link>
+          <p>
+            Page {props.page} of {pages}
+          </p>
+          <p>{count} Applications Total</p>
+          <Link
+            prefetch
+            href={{
+              pathname: 'applications',
+              query: { page: page + 1 },
+            }}
+          >
+            <a className="prev" aria-disabled={page >= pages}>
+              Next
+            </a>
+          </Link>
+        </PaginationStyles>
+      );
+    }}
+  </Query>
+);
 
 export default Pagination;
